@@ -44,6 +44,24 @@
     form {
       margin-top: 10px;
     }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    li.show {
+      opacity: 1;
+    }
   </style>
 </head>
 
@@ -65,25 +83,8 @@
         <img id="outputSrc" src="https://placehold.co/300x300" alt="Output Image">
       </div>
     </div>
-
-    <ul id="logContainer">
-      
-    </ul>
+    <ul id="logContainer"></ul>
   </div>
-
-  <style>
-    ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    li {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 5px;
-      background-color: #f9f9f9;
-    }
-  </style>
 
   <script>
     const form = document.querySelector("form");
@@ -93,11 +94,16 @@
     const logContainer = document.getElementById("logContainer");
     let logItems = ['Starting...', 'Ready!'];
 
-    logItems.forEach(item => {
+    function addLogItem(text) {
       const li = document.createElement("li");
-      li.textContent = item;
-      logContainer.appendChild(li);
-    });
+      li.textContent = text;
+      // Insert the new log item at the beginning of the list
+      logContainer.insertBefore(li, logContainer.firstChild);
+      setTimeout(() => li.classList.add('show'), 10);
+    }
+
+    // Reverse the order of initial log items
+    logItems.reverse().forEach(addLogItem);
 
     inputField.addEventListener("change", e => {
       const file = e.target.files[0];
@@ -118,15 +124,11 @@
         .then(response => response.json())
         .then(data => {
           outputSrc.src = data.data.anonymized_image;
-          const li = document.createElement("li");
-          li.textContent = data.message;
-          logContainer.appendChild(li);
+          addLogItem(data.message);
         })
         .catch(error => {
           console.error('Error:', error);
-          const li = document.createElement("li");
-          li.textContent = `Error: ${error.message}`;
-          logContainer.appendChild(li);
+          addLogItem(`Error: ${error.message}`);
         });
     });
   </script>

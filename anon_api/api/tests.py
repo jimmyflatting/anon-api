@@ -11,12 +11,14 @@ class ImageTestCase(TestCase):
         self.assertEqual(image.anonymized_image, "media/anonymized_images/59jnia4h74za1.jpg")
     
     def test_image_delete(self):
+        Image.objects.create(original_image="media/original_images/59jnia4h74za1.jpg", anonymized_image="media/anonymized_images/59jnia4h74za1.jpg")
         image = Image.objects.get(original_image="media/original_images/59jnia4h74za1.jpg")
         image.delete()
         with self.assertRaises(Image.DoesNotExist):
             Image.objects.get(original_image="media/original_images/59jnia4h74za1.jpg")
     
     def test_image_process(self):
+        Image.objects.create(original_image="media/original_images/59jnia4h74za1.jpg", anonymized_image="media/anonymized_images/59jnia4h74za1.jpg")
         image = Image.objects.get(original_image="media/original_images/59jnia4h74za1.jpg")
-        blur = ImageViewSet().process()
-        self.assertEqual(blur, "media/anonymized_images/59jnia4h74za1.jpg")
+        blur = ImageViewSet().process("media/original_images/59jnia4h74za1.jpg")
+        self.assertTrue(ImageViewSet().process("media/original_images/59jnia4h74za1.jpg"))

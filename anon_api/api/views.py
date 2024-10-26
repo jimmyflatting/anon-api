@@ -7,7 +7,6 @@ from .serializers import ImageSerializer
 from django.core.files.base import ContentFile
 import io
 from PIL import Image as PILImage
-from PIL import Image, ImageFilter
 import cv2 as cv
 import numpy as np
 import time
@@ -20,49 +19,49 @@ class ImageViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         image_file = request.data.get('image')
+        
         if not image_file:
             return Response({'error': 'No image provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Process and anonymize the image
+        # Save the original image - keep pil for debugging purposes at the moment
         original_image = PILImage.open(image_file)
-        anonymized_image = self.process(original_image)
+        image_instance = Image.objects.create(original_image=image_file)
+        image_path = image_instance.original_image.path
 
-        # Save the anonymized image
+        # process img & save
+        anonymized_image = self.process(image_path)
         image_io = io.BytesIO()
         anonymized_image.save(image_io, format='JPEG')
+        image_instance.anonymized_image.save('anonymized.jpg', ContentFile(image_io.getvalue()))
+        image_instance.save()
 
-        # Create the Image instance
-        image = Image.objects.create(
-            original_image=image_file,
-            anonymized_image=ContentFile(image_io.getvalue(), name='anonymized.jpg')
-        )
-
-        serializer = self.get_serializer(image)
+        serializer = self.get_serializer(image_instance)
         return Response({
             'message': 'Image processed successfully',
             'data': serializer.data
         }, status=status.HTTP_201_CREATED)
 
-    def process(self):
-        self.image = cv.imread(self.image)
-        self.k = 100
-        self.model = YuNet(modelPath='data/face_detection_yunet_2023mar.onnx',
+    def process(self, imagePath):
+        image = cv.imread(imagePath)
+        model = YuNet(modelPath='data/face_detection_yunet_2023mar.onnx',
               inputSize=[320, 320],
               confThreshold=0.9,
               nmsThreshold=0.3,
               topK=5000,
               backendId=3,
               targetId=0)
-        self.h, self.w, _ = self.image.shape
+        h, w, _ = image.shape
 
-        self.model.setInputSize([self.w, self.h])
-        tic = time.perf_counter()
-        for i in range(1, self.k):
-            results = self.model.infer(self.image)
-            # blur faces
-            for face in results:
-                x1, y1, x2, y2, _ = face
-                self.image[y1:y2, x1:x2] = cv.GaussianBlur(self.image[y1:y2, x1:x2], (99, 99), 30)
-        toc = time.perf_counter()
+        model.setInputSize([w, h])
+        results = model.infer(image)
+        for face in results:
+            x1, y1, x2, y2, _ = map(int, face)
+            face_region = image[y1:y2, x1:x2]
+            blurred_face = cv.GaussianBlur(face_region, (99, 99), 30)
+            image[y1:y2, x1:x2] = blurred_face
 
-        return self.image
+        # convert to rgb for pil
+        image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+        pil_image = PILImage.fromarray(image_rgb)
+
+        return pil_image
