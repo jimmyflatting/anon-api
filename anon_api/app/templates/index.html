@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>My First Web Page</title>
+  <style>
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      box-sizing: border-box;
+      border-radius: 8px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: space-between;
+    }
+
+    .column {
+      padding: 10px;
+      flex: 50%;
+
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    img {
+      width: 300px;
+      height: auto;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    form {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Customer Data Anonymization API</h1>
+    <div class="row">
+      <div class="column">
+        <h2>Input</h2>
+        <div id="inputContainer">
+          <img id="inputSrc" src="https://placehold.co/300x300" alt="Input Image">
+        </div>
+        <form onSubmit="handleSubmit(event)">
+          <input type="file" name="image">
+        </form>
+      </div>
+      <div class="column" id="outputContainer">
+        <h2>Output</h2>
+        <img id="outputSrc" src="https://placehold.co/300x300" alt="Output Image">
+      </div>
+    </div>
+
+    <ul id="logContainer">
+      
+    </ul>
+  </div>
+
+  <style>
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    li {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+  </style>
+
+  <script>
+    const form = document.querySelector("form");
+    const inputField = form.querySelector("input[type=file]");
+    const inputSrc = document.getElementById("inputSrc");
+    const outputSrc = document.getElementById("outputSrc");
+    const logContainer = document.getElementById("logContainer");
+    let logItems = ['Starting...', 'Ready!'];
+
+    logItems.forEach(item => {
+      const li = document.createElement("li");
+      li.textContent = item;
+      logContainer.appendChild(li);
+    });
+
+    inputField.addEventListener("change", e => {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        inputSrc.src = reader.result;
+        outputSrc.src = "https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif";
+      };
+
+      const formData = new FormData();
+      formData.append("image", file);
+
+      fetch(`/api/images/`, {
+        method: "POST",
+        body: formData
+      })
+        .then(response => response.json())
+        .then(data => {
+          outputSrc.src = data.data.anonymized_image;
+          const li = document.createElement("li");
+          li.textContent = data.message;
+          logContainer.appendChild(li);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const li = document.createElement("li");
+          li.textContent = `Error: ${error.message}`;
+          logContainer.appendChild(li);
+        });
+    });
+  </script>
+</body>
+
+</html>
