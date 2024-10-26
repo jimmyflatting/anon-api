@@ -57,7 +57,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         for face in results:
             x1, y1, x2, y2 = map(int, face[0:4]) # seems like it returns more faces for now. therefore 0:4
             face_region = image[y1:y2, x1:x2]
-            blurred_face = cv.GaussianBlur(face_region, (99, 99), 30)
+            blurred_face = cv.GaussianBlur(face_region, (25, 25), 30)
             image[y1:y2, x1:x2] = blurred_face
 
         # convert to rgb for pil
