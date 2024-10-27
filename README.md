@@ -4,7 +4,7 @@
 
 The Anonymization API utilizes the YuNet model to detect faces in images and anonymize them by applying a blur. Currently, the model returns x and y coordinates for facial landmarks, which may need to be remapped to a -1 to 1 scale for better performance due to image size variations.
 
-![preview](/repo-assets/screenshot.png "Detection example")
+![preview](/media/screenshot.png "Detection example")
 
 ## Installation
 

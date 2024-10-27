@@ -1,5 +1,5 @@
 env/
-anon_api/.env
-anon_api/db.sqlite3
-anon_api/media/anonymized_images/*
-anon_api/media/original_images/*
+.env
+db.sqlite3
+media/anonymized_images/*
+media/original_images/*
