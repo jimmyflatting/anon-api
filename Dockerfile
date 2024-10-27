@@ -8,18 +8,16 @@ ENV PYTHONUNBUFFERED 1
 # Set work directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    libpq-dev \
-    gcc \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# Install system and Python dependencies
+RUN apt-get update && \
+    apt-get install -y libgl1-mesa-glx libpq-dev gcc && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt /app/
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy project
+# Copy project files
 COPY . /app/
 
 # Collect static files
