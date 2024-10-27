@@ -49,6 +49,10 @@ jobs:
           script: |
             docker system prune --filter "until=24h" -f
             docker pull ghcr.io/jimmyflatting/anon-api:latest
-            docker stop anon-api
-            docker rm anon-api
-            docker run -d -p 8001:8001 --name anon-api ghcr.io/jimmyflatting/anon-api:latest
+            docker stop anon-api || true
+            docker rm anon-api || true
+            docker run -d -p 8001:8001 \
+              -e SECRET_KEY="${{ secrets.SECRET_KEY }}" \
+              -e DEBUG="${{ secrets.DEBUG }}" \
+              -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+              --name anon-api ghcr.io/jimmyflatting/anon-api:latest
