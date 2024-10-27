@@ -43,17 +43,19 @@ class ImageViewSet(viewsets.ModelViewSet):
 
     def process(self, imagePath):
         image = cv.imread(imagePath)
-        model = YuNet(modelPath='data/face_detection_yunet_2023mar.onnx',
-              inputSize=[320, 320],
-              confThreshold=0.9,
-              nmsThreshold=0.3,
-              topK=5000,
-              backendId=3,
-              targetId=0)
-        h, w, _ = image.shape
-
-        model.setInputSize([w, h])
+        height, width, channels = image.shape
+        
+        model = YuNet(
+            modelPath='data/face_detection_yunet_2023mar.onnx',
+            inputSize=[width, height],
+            confThreshold=0.9,
+            nmsThreshold=0.3,
+            topK=5000,
+            backendId=3,
+            targetId=0)
+        
         results = model.infer(image)
+        
         for face in results:
             x1, y1, x2, y2 = map(int, face[0:4]) # seems like it returns more faces for now. therefore 0:4
             face_region = image[y1:y2, x1:x2]
