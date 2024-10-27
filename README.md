@@ -19,7 +19,7 @@ pip install -r requirements.txt
 To initialize and run the server:
 
 ```bash
-./anon_api/manage.py migrate && ./anon_api/manage.py runserver
+./core/manage.py migrate && ./core/manage.py runserver
 ```
 
 ## Demo

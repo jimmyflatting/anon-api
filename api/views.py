@@ -23,7 +23,7 @@ class ImageViewSet(viewsets.ModelViewSet):
         if not image_file:
             return Response({'error': 'No image provided'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Save the original image - keep pil for debugging purposes at the moment
+        # save the original image - keep pil for debugging purposes at the moment
         original_image = PILImage.open(image_file)
         image_instance = Image.objects.create(original_image=image_file)
         image_path = image_instance.original_image.path

@@ -34,4 +34,4 @@ RUN python manage.py migrate
 EXPOSE 8001
 
 # Run the application
-CMD ["gunicorn", "--chdir", "anon_api", "--bind", "0.0.0.0:8001", "anon_api.wsgi:application"]
+CMD ["gunicorn", "--chdir", "core", "--bind", "0.0.0.0:8001", "core.wsgi:application"]

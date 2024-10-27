@@ -3,5 +3,5 @@
 .env
 *.pyc
 __pycache__
-anon_api/db.sqlite3
-anon_api/media
+core/db.sqlite3
+core/media
