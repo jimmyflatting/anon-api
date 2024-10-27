@@ -31,7 +31,7 @@ RUN python anon_api/manage.py collectstatic --noinput
 RUN python anon_api/manage.py migrate
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8001
 
 # Run the application
-CMD ["gunicorn", "--chdir", "anon_api", "--bind", "0.0.0.0:8000", "anon_api.wsgi:application"]
+CMD ["gunicorn", "--chdir", "anon_api", "--bind", "0.0.0.0:8001", "anon_api.wsgi:application"]

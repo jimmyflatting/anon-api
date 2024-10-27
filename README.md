@@ -24,7 +24,7 @@ To initialize and run the server:
 
 ## Demo
 
-You can access the API demo here: [anon.foreversegfault.com](https://anon.foreversegfault.com)
+You can access the API demo here: [https://anon-api.jimmyflatting.com](https://anon-api.jimmyflatting.com)
 
 Note: All uploaded images are stored in a PostgreSQL database.
 

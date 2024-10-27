@@ -51,4 +51,4 @@ jobs:
             docker pull ghcr.io/jimmyflatting/anon-api:latest
             docker stop anon-api
             docker rm anon-api
-            docker run -d -p 3000:3000 --name anon-api ghcr.io/jimmyflatting/anon-api:latest
+            docker run -d -p 8001:8001 --name anon-api ghcr.io/jimmyflatting/anon-api:latest
