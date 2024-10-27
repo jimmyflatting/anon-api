@@ -21,7 +21,7 @@ jobs:
 
       - name: Create .env file
         run: |
-          cat <<EOF > anon_api/.env
+          cat <<EOF > .env
           DATABASE_URL=${{ secrets.DATABASE_URL }}
           DEBUG=${{ secrets.DEBUG }}
           SECRET_KEY=${{ secrets.SECRET_KEY }}
