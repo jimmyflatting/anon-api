@@ -9,9 +9,13 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /app
 
 # Install system and Python dependencies
-RUN apt-get update && \
-    apt-get install -y libgl1-mesa-glx libpq-dev gcc && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libpq-dev \
+    gcc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
 COPY requirements.txt /app/
