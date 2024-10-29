@@ -1,4 +1,4 @@
-# Anonymization API with YuNet
+# Anonymization API with OpenCV
 
 ## Overview
 
