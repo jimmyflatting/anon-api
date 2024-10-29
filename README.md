@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Anonymization API utilizes the [OpenCV](https://opencv.org) to detect faces in images and anonymize them by applying a blur.
+The Anonymization API utilizes [OpenCV](https://opencv.org) to detect faces in images and anonymize them by applying a blur.
 
 ![preview](/media/screenshot.png "Detection example")
 
