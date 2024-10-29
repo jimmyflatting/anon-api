@@ -8,9 +8,7 @@ from django.core.files.base import ContentFile
 import io
 from PIL import Image as PILImage
 import cv2 as cv
-import numpy as np
-import time
-from .yunet import YuNet
+from .ocv import ImageProcessor 
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
@@ -42,28 +40,10 @@ class ImageViewSet(viewsets.ModelViewSet):
         }, status=status.HTTP_201_CREATED)
 
     def process(self, imagePath):
-        image = cv.imread(imagePath)
-        height, width, channels = image.shape
-        
-        model = YuNet(
-            modelPath='data/face_detection_yunet_2023mar.onnx',
-            inputSize=[width, height],
-            confThreshold=0.9,
-            nmsThreshold=0.3,
-            topK=5000,
-            backendId=3,
-            targetId=0)
-        
-        results = model.infer(image)
-        
-        for face in results:
-            x1, y1, x2, y2 = map(int, face[0:4]) # seems like it returns more faces for now. therefore 0:4
-            face_region = image[y1:y2, x1:x2]
-            blurred_face = cv.GaussianBlur(face_region, (25, 25), 30)
-            image[y1:y2, x1:x2] = blurred_face
+        image = ImageProcessor(imagePath)
+        image = image.process()
 
         # convert to rgb for pil
-        image_rgb = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-        pil_image = PILImage.fromarray(image_rgb)
+        pil_image = PILImage.fromarray(image)
 
         return pil_image
